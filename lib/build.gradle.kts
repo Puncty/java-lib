@@ -25,4 +25,7 @@ dependencies {
 
     // This dependency is used internally, and not exposed to consumers on their own compile classpath.
     implementation("com.google.guava:guava:31.0.1-jre")
+    
+    // https://mvnrepository.com/artifact/org.json/json
+    implementation("org.json:json:20090211")
 }
