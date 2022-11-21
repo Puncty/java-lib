@@ -1,3 +1,5 @@
+package com.puncty.lib;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -16,7 +18,7 @@ public class Requester {
 
     public String get(String path, Map<String, String> headers) throws IOException, InterruptedException {
         HttpRequest.Builder builder = HttpRequest.newBuilder(this.baseUrl.resolve(path)).GET();
-        HttpResponse resp = this.client.send(this.applyHeaders(builder, headers).build(), HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> resp = this.client.send(this.applyHeaders(builder, headers).build(), HttpResponse.BodyHandlers.ofString());
         
         return resp.body().toString();
     }
@@ -24,7 +26,7 @@ public class Requester {
     public String post(String path, Map<String, String> headers) throws IOException, InterruptedException {
         HttpRequest.Builder builder = HttpRequest.newBuilder(this.baseUrl.resolve(path)).POST(HttpRequest.BodyPublishers.ofString(toForm(headers)));
         HttpRequest request = this.applyHeaders(builder, headers).build();
-        HttpResponse resp = this.client.send(request, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> resp = this.client.send(request, HttpResponse.BodyHandlers.ofString());
 
         return resp.body().toString();
     }

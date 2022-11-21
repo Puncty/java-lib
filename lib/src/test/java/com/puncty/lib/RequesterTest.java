@@ -6,9 +6,9 @@ package com.puncty.lib;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class LibraryTest {
+public class RequesterTest {
     @Test public void someLibraryMethodReturnsTrue() {
-        Library classUnderTest = new Library();
-        assertTrue("someLibraryMethod should return 'true'", classUnderTest.someLibraryMethod());
+        Requester req = new Requester("https://example.com");
+        assertTrue("new Requester is type of Requester", req.getClass() == Requester.class);
     }
 }
