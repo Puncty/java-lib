@@ -4,11 +4,16 @@
 package com.puncty.lib;
 
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 
+import java.io.IOException;
+
+import org.json.JSONException;
+
 public class RequesterTest {
-    @Test public void someLibraryMethodReturnsTrue() {
-        Requester req = new Requester("https://example.com");
-        assertTrue("new Requester is type of Requester", req.getClass() == Requester.class);
+    @Test
+    public void someLibraryMethodReturnsTrue() throws IOException, InterruptedException, JSONException {
+        var r = new Requester("https://johannespour.de/api");
     }
 }
