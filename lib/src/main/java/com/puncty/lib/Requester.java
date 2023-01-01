@@ -9,10 +9,6 @@ import java.net.http.HttpRequest.BodyPublishers;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.json.JSONException;
-
-
-
 public class Requester {
     private URI baseUrl;
     private HttpClient client;
@@ -38,7 +34,7 @@ public class Requester {
         return new RequesterResponse(resp);
     }
 
-    public RequesterResponse get(String path) throws IOException, InterruptedException, JSONException {
+    public RequesterResponse get(String path) throws IOException, InterruptedException {
         return get(path, Map.of());
     }
 
