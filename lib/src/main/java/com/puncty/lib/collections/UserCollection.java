@@ -1,5 +1,7 @@
-package com.puncty.lib;
+package com.puncty.lib.collections;
 
+import com.puncty.lib.Session;
+import com.puncty.lib.User;
 import com.puncty.lib.exceptions.BrokenResponse;
 
 public class UserCollection {

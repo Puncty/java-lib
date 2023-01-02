@@ -11,6 +11,8 @@ import com.google.common.util.concurrent.ExecutionError;
 import com.puncty.lib.exceptions.BrokenResponse;
 import com.puncty.lib.exceptions.RequestFailed;
 import com.puncty.lib.exceptions.UserAlreadyExists;
+import com.puncty.lib.networking.Requester;
+import com.puncty.lib.networking.RequesterResponse;
 
 public class Session {
     private Requester requester;

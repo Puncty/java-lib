@@ -13,6 +13,10 @@ public class User {
         this.email = email;
     }
 
+    public boolean equals(User other) {
+        return this.id == other.id;
+    }
+
     public String getName() {
         return this.name;
     }

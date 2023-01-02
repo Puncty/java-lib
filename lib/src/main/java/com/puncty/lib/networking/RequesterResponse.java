@@ -1,4 +1,4 @@
-package com.puncty.lib;
+package com.puncty.lib.networking;
 
 import java.net.http.HttpResponse;
 import java.util.Optional;

@@ -1,4 +1,4 @@
-package com.puncty.lib;
+package com.puncty.lib.networking;
 
 import java.io.IOException;
 import java.net.URI;
