@@ -25,7 +25,7 @@ public class User {
         return this.email;
     }
 
-    public static User fromJSON(JSONObject data, boolean isOwned) throws JSONException {
+    public static User fromJSON(JSONObject data) throws JSONException {
         String name = data.getString("name");
         String id = data.getString("id");
         String email = data.getString("email-address");

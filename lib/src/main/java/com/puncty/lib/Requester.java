@@ -6,21 +6,11 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpRequest.BodyPublishers;
-import java.util.HashMap;
 import java.util.Map;
 
 public class Requester {
     private URI baseUrl;
     private HttpClient client;
-
-    public static void main(String[] args) throws IOException, InterruptedException {
-        var r = new Requester("http://localhost:3000");
-        Map<String, String> m = new HashMap<String, String>();
-        m.put("name", "Tch1b0");
-        m.put("password", "test");
-        m.put("email-address", "Tch1b0@gmx.com");
-        System.out.println(r.post("/account/register", m));
-    }
 
     public Requester(String baseUrl) {
         this.baseUrl = URI.create(baseUrl);
@@ -38,9 +28,27 @@ public class Requester {
         return get(path, Map.of());
     }
 
-    public RequesterResponse post(String path, Map<String, String> headers) throws IOException, InterruptedException {
-        URI resPath = this.baseUrl.resolve(path + "?" + toForm(headers));
-        HttpRequest.Builder builder = HttpRequest.newBuilder(resPath).POST(BodyPublishers.ofString(toForm(headers)));
+    public RequesterResponse post(String path, Map<String, String> data, Map<String, String> headers) throws IOException, InterruptedException {
+        URI resPath = this.applyArgsToUri(baseUrl, data);
+        HttpRequest.Builder builder = HttpRequest.newBuilder(resPath).POST(BodyPublishers.noBody());
+        HttpRequest request = applyHeaders(builder, headers).build();
+        HttpResponse<String> resp = this.client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        return new RequesterResponse(resp);
+    }
+    
+    public RequesterResponse put(String path, Map<String, String> data, Map<String, String> headers) throws IOException, InterruptedException {
+        URI resPath = this.applyArgsToUri(baseUrl, data);
+        HttpRequest.Builder builder = HttpRequest.newBuilder(resPath).PUT(BodyPublishers.noBody());
+        HttpRequest request = applyHeaders(builder, headers).build();
+        HttpResponse<String> resp = this.client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        return new RequesterResponse(resp);
+    }
+
+    public RequesterResponse delete(String path, Map<String, String> data, Map<String, String> headers) throws IOException, InterruptedException {
+        URI resPath = this.applyArgsToUri(baseUrl, data);
+        HttpRequest.Builder builder = HttpRequest.newBuilder(resPath).DELETE();
         HttpRequest request = applyHeaders(builder, headers).build();
         HttpResponse<String> resp = this.client.send(request, HttpResponse.BodyHandlers.ofString());
 
@@ -52,6 +60,10 @@ public class Requester {
             builder = builder.header(key, headers.get(key));
         }
         return builder;
+    }
+
+    private URI applyArgsToUri(URI path, Map<String, String> data) {
+        return this.baseUrl.resolve(path + "?" + toForm(data));
     }
 
     private String toForm(Map<String, String> data) {
