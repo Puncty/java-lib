@@ -7,7 +7,6 @@ import java.util.Map;
 
 import org.json.JSONException;
 
-import com.google.common.util.concurrent.ExecutionError;
 import com.puncty.lib.exceptions.BrokenResponse;
 import com.puncty.lib.exceptions.RequestFailed;
 import com.puncty.lib.exceptions.UserAlreadyExists;

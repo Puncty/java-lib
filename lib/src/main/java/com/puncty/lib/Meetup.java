@@ -12,7 +12,6 @@ import org.json.JSONObject;
 
 import com.puncty.lib.exceptions.BrokenResponse;
 import com.puncty.lib.exceptions.Unauthorized;
-import com.puncty.lib.networking.RequesterResponse;
 
 public class Meetup {
     private Session session;

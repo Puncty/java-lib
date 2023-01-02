@@ -7,7 +7,6 @@ import org.junit.Test;
 
 import com.puncty.lib.networking.Requester;
 
-import static org.junit.Assert.*;
 
 import java.io.IOException;
 
