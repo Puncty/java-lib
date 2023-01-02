@@ -7,7 +7,6 @@ import java.util.Map;
 import org.json.JSONException;
 
 import com.puncty.lib.exceptions.BrokenResponse;
-import com.puncty.lib.exceptions.RequestFailed;
 import com.puncty.lib.exceptions.UserAlreadyExists;
 import com.puncty.lib.networking.Requester;
 import com.puncty.lib.networking.RequesterResponse;
@@ -67,7 +66,7 @@ public class Session {
     }
 
 
-    public static Session register(Requester req, String name, String email, String password) throws UserAlreadyExists, RequestFailed, BrokenResponse {
+    public static Session register(Requester req, String name, String email, String password) throws UserAlreadyExists, BrokenResponse {
         var path = "/account/register";
         var data = new HashMap<String, String>();
         data.put("name", name);
@@ -83,8 +82,6 @@ public class Session {
 
         if (resp.statusCode == 400) {
             throw new UserAlreadyExists();
-        } else if (resp.statusCode != 200 || resp.json.isEmpty()) {
-            throw new RequestFailed(resp.statusCode);
         }
 
         var json = resp.json.get();
@@ -95,7 +92,7 @@ public class Session {
         }
     }
 
-    public static Session login(Requester req, String email, String password) throws RequestFailed, BrokenResponse {
+    public static Session login(Requester req, String email, String password) throws BrokenResponse {
         var path = "/account/login";
         var data = new HashMap<String, String>();
         data.put("email-address", email);
@@ -103,12 +100,9 @@ public class Session {
 
         RequesterResponse resp;
         try {
-            resp = req.get("/account/login", data);        
+            resp = req.post("/account/login", data,  new HashMap<>());
         } catch (Exception e) {
-            throw new RequestFailed(-1);
-        }
-        if (resp.statusCode != 200 || resp.json.isEmpty()) {
-            throw new RequestFailed(resp.statusCode);
+            throw new BrokenResponse("POST", path);
         }
 
         var json = resp.json.get();

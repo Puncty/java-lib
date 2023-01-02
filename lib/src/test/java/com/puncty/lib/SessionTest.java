@@ -9,7 +9,6 @@ import org.junit.Test;
 
 import com.puncty.lib.collections.UserCollection;
 import com.puncty.lib.exceptions.BrokenResponse;
-import com.puncty.lib.exceptions.RequestFailed;
 import com.puncty.lib.exceptions.UserAlreadyExists;
 import com.puncty.lib.networking.Requester;
 
@@ -19,7 +18,7 @@ public class SessionTest {
     Requester r = new Requester("http://localhost:3000");
 
     @Test
-    public void register() throws UserAlreadyExists, BrokenResponse, RequestFailed  {
+    public void register() throws UserAlreadyExists, BrokenResponse  {
         Session s = Session.register(r, "TestUser", "test@email.com", "Test");
         var uc = new UserCollection(s);
         var me = uc.getMe();
@@ -28,7 +27,7 @@ public class SessionTest {
         assertEquals(me.getEmail(), "test@email.com");
     }
 
-    public void login() throws RequestFailed, BrokenResponse {
+    public void login() throws BrokenResponse {
         Session s = Session.login(r, "test@email.com", "Test");
         var uc = new UserCollection(s);
 
