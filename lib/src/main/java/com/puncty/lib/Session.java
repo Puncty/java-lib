@@ -1,6 +1,5 @@
 package com.puncty.lib;
 
-import java.io.IOException;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -62,19 +61,26 @@ public class Session {
         );
         
         HashMap<String, String> headers = new HashMap<>();
-        headers.put("Authentication", "Basic " + encodedAuth);
+        headers.put("Authorization", "Basic " + encodedAuth);
         
         return headers;
     }
 
 
-    public static Session register(Requester req, String name, String email, String password) throws UserAlreadyExists, RequestFailed, IOException, InterruptedException, JSONException {
+    public static Session register(Requester req, String name, String email, String password) throws UserAlreadyExists, RequestFailed, BrokenResponse {
+        var path = "/account/register";
         var data = new HashMap<String, String>();
         data.put("name", name);
         data.put("email-address", email);
         data.put("password", password);
         
-        var resp = req.get("/account/register", data);
+        RequesterResponse resp;
+        try {
+            resp = req.post(path, data, new HashMap<>());
+        } catch (Exception e) {
+            throw new BrokenResponse("POST", path);   
+        }
+
         if (resp.statusCode == 400) {
             throw new UserAlreadyExists();
         } else if (resp.statusCode != 200 || resp.json.isEmpty()) {
@@ -82,10 +88,15 @@ public class Session {
         }
 
         var json = resp.json.get();
-        return new Session(req, json.getString("id"), json.getString("token"));
+        try {
+            return new Session(req, json.getString("id"), json.getString("token"));
+        } catch (JSONException e) {
+            throw new BrokenResponse("POST", path);
+        }
     }
 
-    public static Session login(Requester req, String email, String password) throws RequestFailed, IOException, InterruptedException, JSONException {
+    public static Session login(Requester req, String email, String password) throws RequestFailed, BrokenResponse {
+        var path = "/account/login";
         var data = new HashMap<String, String>();
         data.put("email-address", email);
         data.put("password", password);
@@ -101,7 +112,11 @@ public class Session {
         }
 
         var json = resp.json.get();
-        return new Session(req, json.getString("id"), json.getString("token"));
+        try {
+            return new Session(req, json.getString("id"), json.getString("token"));
+        } catch (JSONException e) {
+            throw new BrokenResponse("POST", path);
+        }
     }
 
 }

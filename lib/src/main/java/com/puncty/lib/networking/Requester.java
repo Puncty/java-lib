@@ -29,7 +29,7 @@ public class Requester {
     }
 
     public RequesterResponse post(String path, Map<String, String> data, Map<String, String> headers) throws IOException, InterruptedException {
-        URI resPath = this.applyArgsToUri(baseUrl, data);
+        URI resPath = this.applyArgsToUri(path, data);
         HttpRequest.Builder builder = HttpRequest.newBuilder(resPath).POST(BodyPublishers.noBody());
         HttpRequest request = applyHeaders(builder, headers).build();
         HttpResponse<String> resp = this.client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -38,7 +38,7 @@ public class Requester {
     }
     
     public RequesterResponse put(String path, Map<String, String> data, Map<String, String> headers) throws IOException, InterruptedException {
-        URI resPath = this.applyArgsToUri(baseUrl, data);
+        URI resPath = this.applyArgsToUri(path, data);
         HttpRequest.Builder builder = HttpRequest.newBuilder(resPath).PUT(BodyPublishers.noBody());
         HttpRequest request = applyHeaders(builder, headers).build();
         HttpResponse<String> resp = this.client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -47,7 +47,7 @@ public class Requester {
     }
 
     public RequesterResponse delete(String path, Map<String, String> data, Map<String, String> headers) throws IOException, InterruptedException {
-        URI resPath = this.applyArgsToUri(baseUrl, data);
+        URI resPath = this.applyArgsToUri(path, data);
         HttpRequest.Builder builder = HttpRequest.newBuilder(resPath).DELETE();
         HttpRequest request = applyHeaders(builder, headers).build();
         HttpResponse<String> resp = this.client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -62,7 +62,7 @@ public class Requester {
         return builder;
     }
 
-    private URI applyArgsToUri(URI path, Map<String, String> data) {
+    private URI applyArgsToUri(String path, Map<String, String> data) {
         return this.baseUrl.resolve(path + "?" + toForm(data));
     }
 

@@ -32,7 +32,7 @@ public class User {
     public static User fromJSON(JSONObject data) throws JSONException {
         String name = data.getString("name");
         String id = data.getString("id");
-        String email = data.getString("email-address");
+        String email = data.getString("email_address");
 
         return new User(name, id, email);
     }

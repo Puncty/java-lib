@@ -11,6 +11,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.puncty.lib.exceptions.BrokenResponse;
+import com.puncty.lib.exceptions.NotFound;
 import com.puncty.lib.exceptions.Unauthorized;
 
 public class Meetup {
@@ -83,7 +84,7 @@ public class Meetup {
         var resp = this.session.put(path, data);
 
         if (resp.statusCode == 401) {
-            throw new Unauthorized("attempt to edit meetup " + this.id + ", but session user is not admin");
+            throw new Unauthorized("attempted to edit meetup " + this.id + ", but session user is not admin");
         }
 
         try {
@@ -91,6 +92,22 @@ public class Meetup {
         } catch (Exception e) {
             throw new BrokenResponse("PUT", path);
         }
+    }
+
+    public void delete() throws BrokenResponse, Unauthorized {
+        var path = "/meetup/" + this.id;
+        var resp = this.session.delete(path, new HashMap<>());
+
+        if (resp.statusCode == 401) {
+            throw new Unauthorized("attempted to delete meetup " + this.id + ", but session user is not admin");
+        } else if (resp.statusCode != 200) {
+            throw new BrokenResponse("DELETE", path);
+        }
+    } 
+
+    public void leave() throws BrokenResponse, JSONException, NotFound {
+        var path = String.format("/meetup/%s/leave", this.id);
+        this.session.put(path, new HashMap<>());
     }
 
     private void updateThisFromMeetup(Meetup other) {
