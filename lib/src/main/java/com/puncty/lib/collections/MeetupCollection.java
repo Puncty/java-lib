@@ -1,5 +1,6 @@
 package com.puncty.lib.collections;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,7 +24,7 @@ public class MeetupCollection {
         var path = "/meetup";
 
         var data = new HashMap<String, String>();
-        data.put("timestamp", (timestamp / 1000)+"");
+        data.put("datetime", (timestamp / 1000)+"");
         data.put("location", location);
 
         var resp = this.session.post(path, data);
@@ -32,6 +33,10 @@ public class MeetupCollection {
         } catch (JSONException e) {
             throw new BrokenResponse("POST", path);
         }
+    }
+
+    public Meetup create(Date datetime, String location) throws BrokenResponse {
+        return this.create(datetime.getTime(), location);
     }
 
     public Meetup get(String id) throws BrokenResponse, NotFound, Unauthorized {
