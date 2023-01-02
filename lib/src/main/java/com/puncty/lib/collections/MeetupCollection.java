@@ -1,6 +1,8 @@
 package com.puncty.lib.collections;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.json.JSONException;
 
@@ -47,6 +49,23 @@ public class MeetupCollection {
         } catch (JSONException e) {
             throw new BrokenResponse("GET", path);
         }
+    }
+
+    public List<Meetup> joined() throws BrokenResponse {
+        var path = "/meetup";
+        var resp = this.session.get(path);
+        ArrayList<Meetup> meetups = new ArrayList<Meetup>();
+
+        try {
+            var jsonMeetups = resp.json.get().getJSONArray("meetups");
+            for (int i = 0; i < jsonMeetups.length(); i++) {
+                meetups.add(Meetup.fromJSON(session, jsonMeetups.getJSONObject(i)));
+            }
+        } catch (JSONException e) {
+            throw new BrokenResponse("GET", path);
+        }
+
+        return meetups;
     }
 
     public Meetup join(String id) throws BrokenResponse, NotFound {
