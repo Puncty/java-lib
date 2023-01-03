@@ -41,6 +41,12 @@ public class Meetup {
         return this.admin;
     }
 
+    /**
+     * <b>ADMIN ACTION</b>: set the new admin of meetup
+     * @param id the id of the new admin, which needs to be a member of this meetup first
+     * @throws BrokenResponse if something unexpected goes wrong
+     * @throws Unauthorized if you are not the admin of the meetup
+     */
     public void setAdmin(String id) throws BrokenResponse, Unauthorized {
         var data = this.singleKeyMap("admin", id);
         this.edit(data);
@@ -54,6 +60,11 @@ public class Meetup {
         return this.datetime;
     }
 
+    /**
+     * <b>ADMIN ACTION</b>: update the datetime of this meetup
+     * @throws BrokenResponse if something unexpected goes wrong
+     * @throws Unauthorized if you are not the admin of this meetup
+     */
     public void setDatetime(Date date) throws BrokenResponse, Unauthorized {
         var data = this.singleKeyMap("datetime", (date.getTime() / 1000)+"");
         this.edit(data);
@@ -63,6 +74,11 @@ public class Meetup {
         return this.location;
     }
 
+    /**
+     * <b>ADMIN ACTION</b>: update the location of this meetup
+     * @throws BrokenResponse if something unexpected goes wrong
+     * @throws Unauthorized if you are not the admin of this meetup
+     */
     public void setLocation(String location) throws BrokenResponse, Unauthorized {
         var data = this.singleKeyMap("location", location);
         this.edit(data);
@@ -79,6 +95,12 @@ public class Meetup {
         }
     }
 
+    /**
+     * <b>ADMIN ACTION</b>: edit this meetup
+     * @param data the data to edit
+     * @throws BrokenResponse if something unexpected goes wrong
+     * @throws Unauthorized if you are not the admin of this meetup
+     */
     public void edit(Map<String, String> data) throws BrokenResponse, Unauthorized {
         var path = "/meetup/" + this.id;
         var resp = this.session.put(path, data);
@@ -94,6 +116,11 @@ public class Meetup {
         }
     }
 
+    /**
+     * <b>ADMIN ACTION</b>: delete this meetup
+     * @throws BrokenResponse if something unexpected goes wrong
+     * @throws Unauthorized if you are not the admin of this meetup
+     */
     public void delete() throws BrokenResponse, Unauthorized {
         var path = "/meetup/" + this.id;
         var resp = this.session.delete(path, new HashMap<>());
@@ -105,7 +132,11 @@ public class Meetup {
         }
     } 
 
-    public void leave() throws BrokenResponse, JSONException, NotFound {
+    /**
+     * leave this meetup. This method is equivalent to {@link MeetupCollection#leave(String)}
+     * @throws BrokenResponse if something unexpected goes wrong
+     */
+    public void leave() throws BrokenResponse {
         var path = String.format("/meetup/%s/leave", this.id);
         this.session.put(path, new HashMap<>());
     }

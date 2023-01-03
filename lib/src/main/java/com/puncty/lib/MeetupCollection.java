@@ -1,4 +1,4 @@
-package com.puncty.lib.collections;
+package com.puncty.lib;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -7,8 +7,6 @@ import java.util.List;
 
 import org.json.JSONException;
 
-import com.puncty.lib.Meetup;
-import com.puncty.lib.Session;
 import com.puncty.lib.exceptions.BrokenResponse;
 import com.puncty.lib.exceptions.NotFound;
 import com.puncty.lib.exceptions.Unauthorized;
@@ -35,10 +33,24 @@ public class MeetupCollection {
         }
     }
 
+    /**
+     * create a new meetup
+     * @param datetime when will the meetup take place
+     * @param location where will the meetup take place
+     * @return the new meetup
+     * @throws BrokenResponse if something unexpected goes wrong
+     */
     public Meetup create(Date datetime, String location) throws BrokenResponse {
         return this.create(datetime.getTime(), location);
     }
 
+    /**
+     * get a certain meetup by it's id. Only works with meetups you are a member of
+     * @param id the id of the meetup
+     * @throws BrokenResponse if something unexpected goes wrong
+     * @throws NotFound if there is no meetup with the given id
+     * @throws Unauthorized if you are not a member of this meetup
+     */
     public Meetup get(String id) throws BrokenResponse, NotFound, Unauthorized {
         var path = "/meetup/" + id;
 
@@ -55,7 +67,12 @@ public class MeetupCollection {
             throw new BrokenResponse("GET", path);
         }
     }
-
+    
+    /**
+     * get all meetups that you are a member of 
+     * @return a list of meetups
+     * @throws BrokenResponse if something unexpected goes wrong
+     */
     public List<Meetup> joined() throws BrokenResponse {
         var path = "/meetup";
         var resp = this.session.get(path);
@@ -73,6 +90,13 @@ public class MeetupCollection {
         return meetups;
     }
 
+    /**
+     * join a certain meetup 
+     * @param id the id of the meetup to join
+     * @return the joined meetup
+     * @throws BrokenResponse if something unexpected goes wrong
+     * @throws NotFound if there is no meetup with the given id
+     */
     public Meetup join(String id) throws BrokenResponse, NotFound {
         var path = String.format("/meetup/%s/join", id);
     
@@ -88,6 +112,12 @@ public class MeetupCollection {
         }
     }
 
+    /**
+     * leave a certain meetup. This method is equivalent to {@link Meetup#leave()}
+     * @param id the id of the meetup to leave
+     * @throws BrokenResponse if something unexpected goes wrong
+     * @throws NotFound if there is no meetup with the given id
+     */
     public void leave(String id) throws BrokenResponse, NotFound {
         var path = String.format("/meetup/%s/leave", id);
     

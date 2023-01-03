@@ -11,6 +11,9 @@ import com.puncty.lib.exceptions.UserAlreadyExists;
 import com.puncty.lib.networking.Requester;
 import com.puncty.lib.networking.RequesterResponse;
 
+/**
+ * a puncty session object, used for interacting with the puncty-api
+ */
 public class Session {
     private Requester requester;
     private String id;
@@ -22,7 +25,13 @@ public class Session {
         this.token = tok;
     }
 
-    public RequesterResponse get(String path) throws BrokenResponse {
+    /**
+     * send a get request with authentication
+     * @param path the api-route to call
+     * @return the request result
+     * @throws BrokenResponse if something unexpected goes wrong
+     */
+    protected RequesterResponse get(String path) throws BrokenResponse {
         try {
             return this.requester.get(path, this.getAuthHeader());
         } catch (Exception e) {
@@ -30,7 +39,14 @@ public class Session {
         }
     }
 
-    public RequesterResponse post(String path, Map<String, String> data) throws BrokenResponse {
+    /**
+     * send a post request with authentication
+     * @param path the api-route to call
+     * @param data the data to send along with
+     * @return the request result
+     * @throws BrokenResponse if something unexpected goes wrong
+     */
+    protected RequesterResponse post(String path, Map<String, String> data) throws BrokenResponse {
         try {
             return this.requester.post(path, data, this.getAuthHeader());
         } catch (Exception e) {
@@ -38,7 +54,14 @@ public class Session {
         }
     }
 
-    public RequesterResponse put(String path, Map<String, String> data) throws BrokenResponse {
+    /**
+     * send a put request with authentication
+     * @param path the api-route to call
+     * @param data the data to send along with
+     * @return the request result
+     * @throws BrokenResponse if something unexpected goes wrong
+     */
+    protected RequesterResponse put(String path, Map<String, String> data) throws BrokenResponse {
         try {
             return this.requester.put(path, data, this.getAuthHeader());
         } catch (Exception e) {
@@ -46,7 +69,14 @@ public class Session {
         }
     }
 
-    public RequesterResponse delete(String path, Map<String, String> data) throws BrokenResponse {
+    /**
+     * send a delete request with authentication
+     * @param path the api-route to call
+     * @param data the data to send along with
+     * @return the request result
+     * @throws BrokenResponse if something unexpected goes wrong
+     */
+    protected RequesterResponse delete(String path, Map<String, String> data) throws BrokenResponse {
         try {
             return this.requester.delete(path, data, this.getAuthHeader());
         } catch (Exception e) {
