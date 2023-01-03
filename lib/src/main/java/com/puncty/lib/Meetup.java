@@ -11,7 +11,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.puncty.lib.exceptions.BrokenResponse;
-import com.puncty.lib.exceptions.NotFound;
 import com.puncty.lib.exceptions.Unauthorized;
 
 public class Meetup {
