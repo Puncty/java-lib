@@ -17,8 +17,8 @@ UserCollection uc = new UserCollection(s);
 
 User me = uc.getMe();
 
-System.out.println(me.name);
-System.out.println(me.email);
+System.out.println(me.getName());
+System.out.println(me.getEmail());
 ```
 
 ```
@@ -32,10 +32,10 @@ dude@gmail.com
 Requester r = new Requester("https://api.puncty.com");
 Session s = Session.login(r, "dude@gmail.com", "MySecretPassword");
 
-MeetingCollection mc = new MeetingCollection(s);
+MeetupCollection mc = new MeetupCollection(s);
 Meetup meetup = mc.create(LocalDate.now(), "city center");
 
-System.out.println(meetup.location);
+System.out.println(meetup.getLocation());
 ```
 
 ```
