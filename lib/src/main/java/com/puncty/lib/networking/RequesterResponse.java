@@ -20,4 +20,14 @@ public class RequesterResponse {
             this.json = Optional.empty();
         }
     }
+
+    public RequesterResponse(int statusCode, String text) {
+        this.statusCode = statusCode;
+        this.text = text;
+        try {
+            this.json = Optional.of(new JSONObject(this.text));
+        } catch (JSONException e) {
+            this.json = Optional.empty();
+        }
+    }
 }

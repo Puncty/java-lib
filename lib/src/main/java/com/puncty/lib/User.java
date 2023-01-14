@@ -14,7 +14,7 @@ public class User {
     }
 
     public boolean equals(User other) {
-        return this.id == other.id;
+        return this.id.equals(other.id);
     }
 
     public String getName() {
