@@ -32,6 +32,10 @@ public class Meetup {
         this.location = location;
     }
 
+    public boolean equals(Meetup other) {
+        return this.id.equals(other.getId());
+    }
+
     public String getId() {
         return this.id;
     }
