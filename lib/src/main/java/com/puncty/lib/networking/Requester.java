@@ -1,82 +1,111 @@
 package com.puncty.lib.networking;
 
+import java.io.BufferedInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.net.http.HttpRequest.BodyPublishers;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.HashMap;
 import java.util.Map;
 
+import com.puncty.lib.exceptions.BrokenResponse;
+
 public class Requester {
-    private URI baseUrl;
-    private HttpClient client;
+    private String baseUrl;
 
     public Requester(String baseUrl) {
-        this.baseUrl = URI.create(baseUrl);
-        this.client = HttpClient.newHttpClient();
+        this.baseUrl = baseUrl;
     }
 
-    public RequesterResponse get(String path, Map<String, String> headers) throws IOException, InterruptedException {
-        HttpRequest.Builder builder = HttpRequest.newBuilder(this.baseUrl.resolve(path)).GET();
-        HttpResponse<String> resp = this.client.send(applyHeaders(builder, headers).build(), HttpResponse.BodyHandlers.ofString());
-
-        return new RequesterResponse(resp);
+    public RequesterResponse get(String path, Map<String, String> headers) throws IOException, InterruptedException, MalformedURLException {
+        HttpURLConnection conn = createConnection(path, "GET");
+        applyHeaders(conn, headers);
+        conn.connect();
+        return readRequest(conn);
     }
 
     public RequesterResponse get(String path) throws IOException, InterruptedException {
-        return get(path, Map.of());
+        return get(path, new HashMap<String, String>());
     }
 
-    public RequesterResponse post(String path, Map<String, String> data, Map<String, String> headers) throws IOException, InterruptedException {
-        URI resPath = this.applyArgsToUri(path, data);
-        HttpRequest.Builder builder = HttpRequest.newBuilder(resPath).POST(BodyPublishers.noBody());
-        HttpRequest request = applyHeaders(builder, headers).build();
-        HttpResponse<String> resp = this.client.send(request, HttpResponse.BodyHandlers.ofString());
-
-        return new RequesterResponse(resp);
+    public RequesterResponse post(String path, Map<String, String> data, Map<String, String> headers) throws IOException, InterruptedException, BrokenResponse {
+        return nonGetRequest(path, data, headers, "POST");
     }
     
-    public RequesterResponse put(String path, Map<String, String> data, Map<String, String> headers) throws IOException, InterruptedException {
-        URI resPath = this.applyArgsToUri(path, data);
-        HttpRequest.Builder builder = HttpRequest.newBuilder(resPath).PUT(BodyPublishers.noBody());
-        HttpRequest request = applyHeaders(builder, headers).build();
-        HttpResponse<String> resp = this.client.send(request, HttpResponse.BodyHandlers.ofString());
-
-        return new RequesterResponse(resp);
+    public RequesterResponse put(String path, Map<String, String> data, Map<String, String> headers) throws IOException, InterruptedException, BrokenResponse {
+        return nonGetRequest(path, data, headers, "PUT");
     }
 
-    public RequesterResponse delete(String path, Map<String, String> data, Map<String, String> headers) throws IOException, InterruptedException {
-        URI resPath = this.applyArgsToUri(path, data);
-        HttpRequest.Builder builder = HttpRequest.newBuilder(resPath).DELETE();
-        HttpRequest request = applyHeaders(builder, headers).build();
-        HttpResponse<String> resp = this.client.send(request, HttpResponse.BodyHandlers.ofString());
-
-        return new RequesterResponse(resp);
+    public RequesterResponse delete(String path, Map<String, String> data, Map<String, String> headers) throws IOException, InterruptedException, BrokenResponse {
+        return nonGetRequest(path, data, headers, "DELETE");
     }
 
-    public static HttpRequest.Builder applyHeaders(HttpRequest.Builder builder, Map<String, String> headers) {
+    private RequesterResponse nonGetRequest(String path, Map<String, String> data, Map<String, String> headers, String method) throws IOException, InterruptedException, BrokenResponse {
+        String url = path + "?" + toForm(data);
+        HttpURLConnection conn = createConnection(url, method);
+        applyHeaders(conn, headers);
+
+        // // write data to be sent
+        // conn.setDoOutput(true);
+        // DataOutputStream out = new DataOutputStream(conn.getOutputStream());
+        // out.writeBytes(toForm(data));
+        // out.flush();
+        // out.close();
+
+        conn.connect();
+        return readRequest(conn);
+    }
+
+    private static void applyHeaders(HttpURLConnection conn, Map<String, String> headers) {
         for (String key : headers.keySet()) {
-            builder = builder.header(key, headers.get(key));
+            conn.setRequestProperty(key, headers.get(key));
         }
-        return builder;
     }
 
-    private URI applyArgsToUri(String path, Map<String, String> data) {
-        return this.baseUrl.resolve(path + "?" + toForm(data));
+    private HttpURLConnection createConnection(String path, String method) throws MalformedURLException, IOException {
+        URL url = new URL(this.baseUrl + path);
+        System.out.println(url.toString());
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod(method);
+        return conn;
+    }
+
+    private RequesterResponse readRequest(HttpURLConnection conn) throws IOException {
+        String content = "";
+        try {
+            InputStream in = new BufferedInputStream(conn.getInputStream());
+            content = readStream(in);
+        } catch (Exception e) {
+            // do nothing
+        } finally {
+            conn.disconnect();
+        }
+
+        return new RequesterResponse(conn.getResponseCode(), content);
+    }
+
+    private String readStream(InputStream in) {
+        try {
+            return new String(in.readAllBytes(), "utf8");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "";
+        }
     }
 
     private String toForm(Map<String, String> data) {
-        String str = "";
+        StringBuffer str = new StringBuffer();
 
         for (String key : data.keySet()) {
-            if (!str.equals("")) {
-                str += "&" ;
+            if (str.length() != 0) {
+                str.append("&") ;
             }
-            str += key + "=" + data.get(key);
+            str.append(key + "=" + data.get(key));
         }
 
-        return str;
+        return str.toString();
     }
 
 }

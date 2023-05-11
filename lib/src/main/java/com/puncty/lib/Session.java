@@ -107,7 +107,8 @@ public class Session {
         try {
             resp = req.post(path, data, new HashMap<>());
         } catch (Exception e) {
-            throw new BrokenResponse("POST", path);   
+            e.printStackTrace();
+            throw new BrokenResponse("POST", path);
         }
 
         if (resp.statusCode == 400) {
@@ -132,6 +133,7 @@ public class Session {
         try {
             resp = req.post("/account/login", data,  new HashMap<>());
         } catch (Exception e) {
+            e.printStackTrace();
             throw new BrokenResponse("POST", path);
         }
 
