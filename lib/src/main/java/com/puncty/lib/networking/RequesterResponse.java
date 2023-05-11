@@ -11,22 +11,13 @@ public class RequesterResponse {
     public Optional<JSONObject> json;
     public String text;
 
-    public RequesterResponse(HttpResponse<String> response) {
-        this.statusCode = response.statusCode();
-        this.text = response.body().toString();
-        try {
-            this.json = Optional.of(new JSONObject(this.text));
-        } catch (JSONException e) {
-            this.json = Optional.empty();
-        }
-    }
-
     public RequesterResponse(int statusCode, String text) {
         this.statusCode = statusCode;
         this.text = text;
         try {
-            this.json = Optional.of(new JSONObject(this.text));
+            this.json = Optional.of(new JSONObject(this.text.strip()));
         } catch (JSONException e) {
+            e.printStackTrace();
             this.json = Optional.empty();
         }
     }
