@@ -1,6 +1,7 @@
 package com.puncty.lib.networking;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -86,13 +87,25 @@ public class Requester {
         return new RequesterResponse(conn.getResponseCode(), content);
     }
 
-    private String readStream(InputStream in) {
+    private String readStream(InputStream in) throws IOException {
         try {
-            return new String(in.readAllBytes(), "utf8");
+            return new String(toByteArray(in), "utf8");
         } catch (Exception e) {
             e.printStackTrace();
             return "";
         }
+    }
+
+    private byte[] toByteArray(InputStream in) throws IOException {
+        ByteArrayOutputStream buf = new ByteArrayOutputStream();
+        while (true) {
+            byte[] bytes = new byte[4];
+            int b = in.read(bytes, 0, bytes.length);
+            if (b == -1) break;
+            buf.write(bytes, 0, b);
+        }
+        buf.flush();
+        return buf.toByteArray();
     }
 
     private String toForm(Map<String, String> data) {
