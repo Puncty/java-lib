@@ -1,6 +1,5 @@
 package com.puncty.lib.networking;
 
-import java.net.http.HttpResponse;
 import java.util.Optional;
 
 import org.json.JSONException;
