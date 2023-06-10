@@ -13,6 +13,7 @@ import com.puncty.lib.networking.RequesterResponse;
 
 public class MeetupCollectionTest {
     final String MOCK_MEETUP_JSON = "{\"id\": \"12345\",\"admin\": {    \"id\": \"1234\",    \"name\": \"Dude\",    \"email_address\": \"dude@example.com\"},\"members\": [{    \"id\": \"1234\",    \"name\": \"Dude\",    \"email_address\": \"dude@example.com\"}],\"datetime\": 1234,\"location\": \"Park\"}";
+    final String MOCK_JOINED_JSON = "{\"meetups\": [{\"id\": \"12345\",\"admin\": {    \"id\": \"1234\",    \"name\": \"Dude\",    \"email_address\": \"dude@example.com\"},\"members\": [{    \"id\": \"1234\",    \"name\": \"Dude\",    \"email_address\": \"dude@example.com\"}],\"datetime\": 1234,\"location\": \"Park\"}, {\"id\": \"54321\",\"admin\": {    \"id\": \"4321\",    \"name\": \"OtherDude\",    \"email_address\": \"other-dude@example.com\"}, \"members\": [{    \"id\": \"4321\",    \"name\": \"OtherDude\",    \"email_address\": \"other-dude@example.com\"}],\"datetime\": 43212,\"location\": \"City\"}]}";
 
     MockRequester r = new MockRequester();
     Session s = new Session(r, "1234", "test");
@@ -36,6 +37,17 @@ public class MeetupCollectionTest {
 
         var m = mc.join("12345");
         meetupAssertions(m);
+    }
+
+    @Test
+    public void joinedMeetups() throws BrokenResponse, NotFound, Unauthorized {
+        r.mockGet("/meetup", 
+            new RequesterResponse(200, MOCK_JOINED_JSON)
+        );
+
+        var m = mc.joined();
+        assertEquals(m.size(), 2);
+        assertEquals(m.get(0).getAdmin().getName(), "Dude");
     }
 
     @Test
