@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 
 import com.puncty.lib.exceptions.BrokenResponse;
@@ -69,19 +70,19 @@ public class MeetupCollection {
     }
     
     /**
-     * get all meetups that you are a member of 
-     * @return a list of meetups
+     * get all meetup ids of meetups that you are a member of 
+     * @return a list of meetups ids
      * @throws BrokenResponse if something unexpected goes wrong
      */
-    public List<Meetup> joined() throws BrokenResponse {
+    public List<String> joined() throws BrokenResponse {
         var path = "/meetup";
         var resp = this.session.get(path);
-        ArrayList<Meetup> meetups = new ArrayList<Meetup>();
+        ArrayList<String> meetups = new ArrayList<>();
 
         try {
-            var jsonMeetups = resp.json.get().getJSONArray("meetups");
-            for (int i = 0; i < jsonMeetups.length(); i++) {
-                meetups.add(Meetup.fromJSON(session, jsonMeetups.getJSONObject(i)));
+            JSONArray meetupIds = resp.json.get().getJSONArray("meetups");
+            for (int i = 0; i < meetupIds.length(); i++) {
+                meetups.add(meetupIds.get(i).toString());
             }
         } catch (JSONException e) {
             throw new BrokenResponse("GET", path);
