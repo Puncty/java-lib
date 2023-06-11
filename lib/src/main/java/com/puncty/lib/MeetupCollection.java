@@ -19,7 +19,7 @@ public class MeetupCollection {
         this.session = s;
     }
 
-    public Meetup create(long timestamp, String location) throws BrokenResponse {
+    public String create(long timestamp, String location) throws BrokenResponse {
         var path = "/meetup";
 
         var data = new HashMap<String, String>();
@@ -28,8 +28,8 @@ public class MeetupCollection {
 
         var resp = this.session.post(path, data);
         try {
-            return Meetup.fromJSON(this.session, resp.json.get());
-        } catch (JSONException e) {
+            return resp.text;
+        } catch (Exception e) {
             throw new BrokenResponse("POST", path);
         }
     }
@@ -38,10 +38,10 @@ public class MeetupCollection {
      * create a new meetup
      * @param datetime when will the meetup take place
      * @param location where will the meetup take place
-     * @return the new meetup
+     * @return the id of the new meetup
      * @throws BrokenResponse if something unexpected goes wrong
      */
-    public Meetup create(Date datetime, String location) throws BrokenResponse {
+    public String create(Date datetime, String location) throws BrokenResponse {
         return this.create(datetime.getTime(), location);
     }
 

@@ -22,11 +22,11 @@ public class MeetupCollectionTest {
     @Test
     public void createMeetup() throws BrokenResponse {
         r.mockPost("/meetup", 
-            new RequesterResponse(200, MOCK_MEETUP_JSON)
+            new RequesterResponse(200, "12345")
         );
 
         var m = mc.create(1234, "Park");
-        meetupAssertions(m);
+        assertTrue(m.equals("12345"));
     }
 
     @Test
